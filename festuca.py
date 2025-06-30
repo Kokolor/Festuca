@@ -10,7 +10,7 @@ INITRD_IMG    = "initrd.img"
 DISK_IMG      = "festuca.img"
 MOUNT_POINT   = "/tmp/festuca_mount"
 GRUB_TMP_CFG  = "grub.cfg.temp"
-EFI_SIZE      = "50MiB"
+EFI_SIZE      = "128MiB"
 
 def run(cmd):
     print(f"> {cmd}")
@@ -50,12 +50,12 @@ def full_build():
         for d in ("bin","sbin","etc","dev","proc","sys","tmp","mnt","lib","lib64","usr","var"):
             os.makedirs(d, exist_ok=True)
         run("sudo chmod +x ../package/build/*")
-        run("sudo cp ../package/build/* bin/")
+        run("sudo rsync -a ../package/build/ .")
         run("sudo mknod dev/null c 1 3")
         run("sudo chmod 666 dev/null")
         run(f"find . | cpio -o --format=newc | gzip > ../{INITRD_IMG}")
         os.chdir(cwd)
-        run(f"dd if=/dev/zero of={DISK_IMG} bs=1M count=128")
+        run(f"dd if=/dev/zero of={DISK_IMG} bs=1M count=1024")
         run(f"parted {DISK_IMG} --script mklabel gpt")
         run(f"parted {DISK_IMG} --script mkpart ESP fat32 1MiB {EFI_SIZE}")
         run(f"parted {DISK_IMG} --script set 1 esp on")
@@ -110,7 +110,7 @@ menuentry "Festuca" {
         run(f"sudo losetup -d {loop}")
         ovmf_paths = [
             "/usr/share/edk2-ovmf/OVMF_CODE.fd",
-            "/usr/share/edk2-ovmf/x64/OVMF_CODE.4m.fd",
+            "/usr/share/edk2-ovmf/x64/OVMF.4m.fd",
             "/usr/share/OVMF/OVMF_CODE.fd"
         ]
         ovmf_found = None

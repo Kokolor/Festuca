@@ -1,0 +1,4 @@
+glibc - configure --libdir=/lib64 --prefix=/usr
+nano - configure --prefix=/usr --disable-libmagic --disable-color --disable-nanorc --disable-utf8
+ncurses 6.5 - configure --with-shared --with-termlib --enable-widec --with-versioned-syms --prefix=/usr --without-cxx-binding
+zlib - configure --prefix=/usr
