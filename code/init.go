@@ -8,8 +8,11 @@ import (
 )
 
 func main() {
-	fmt.Println("Welcome to Festuca!\nLaunching toybox")
-	cmd := exec.Command("/bin/toybox-x86_64", "sh")
+	fmt.Println("Welcome to Festuca!\n")
+	syscall.Mount("proc", "/proc", "proc", 0, "")
+	syscall.Mount("sysfs", "/sys", "sysfs", 0, "")
+	syscall.Mount("devtmpfs", "/dev", "devtmpfs", 0, "")
+	cmd := exec.Command("/bin/busybox", "sh")
 	cmd.Stdin = os.Stdin
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
